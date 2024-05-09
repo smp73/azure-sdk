@@ -365,7 +365,7 @@ function CreateWorkItem($title, $type, $iteration, $area, $fields, $assignedTo, 
     $parameters += $fields
   }
 
-  Write-Host "Creating work item"
+  Write-Host "Creating work item, title: $title"
   $workItem = Invoke-AzBoardsCmd "work-item create" $parameters $outputCommand
   Write-Host $workItem
   $workItemId = $workItem.id
@@ -553,6 +553,7 @@ function FindOrCreatePackageGroupParent($serviceName, $packageDisplayName, $outp
   $fields += "`"ServiceName=${serviceName}`""
   $fields += "`"Custom.EpicType=Product`""
   $serviceParentItem = FindOrCreateServiceParent $serviceName -outputCommand $outputCommand -ignoreReleasePlannerTests $ignoreReleasePlannerTests -tag $tag
+  Write-Host "Creating product Epic work item, ServiceName: $serviceName, PackageDisplayName: $packageDisplayName"
   $workItem = CreateWorkItem $packageDisplayName "Epic" "Release" "Release" $fields $null $serviceParentItem.id -tag $tag
 
   $localKey = BuildHashKey $serviceName $packageDisplayName
@@ -574,6 +575,7 @@ function FindOrCreateServiceParent($serviceName, $outputCommand = $true, $ignore
   $fields += "`"ServiceName=${serviceName}`""
   $fields += "`"Custom.EpicType=Service`""
   $parentId = $null
+  Write-Host "Creating service Epic work item, ServiceName: $serviceName"  
   $workItem = CreateWorkItem $serviceName "Epic" "Release" "Release" $fields $null $parentId -outputCommand $outputCommand -tag $tag
 
   $localKey = BuildHashKey $serviceName
